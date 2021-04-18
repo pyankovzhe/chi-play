@@ -7,16 +7,18 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/pyankovzhe/chi-router/httpd/handler"
 	"github.com/pyankovzhe/chi-router/platform/newsfeed"
+	"github.com/sirupsen/logrus"
 )
 
 type server struct {
 	router *chi.Mux
 	store  *newsfeed.Repo
+	logger *logrus.Logger
 }
 
 func (s *server) configureRouter() {
 	s.router.Use(middleware.RequestID)
-	s.router.Use(middleware.Logger)
+	s.router.Use(middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: s.logger, NoColor: false}))
 	s.router.Use(middleware.Recoverer)
 
 	s.router.Get("/newsfeed", handler.NewsfeedGet(s.store))
@@ -26,18 +28,27 @@ func (s *server) configureRouter() {
 	})
 }
 
-func NewServer() *server {
+func NewServer(logger *logrus.Logger, store *newsfeed.Repo) *server {
 	s := &server{
 		router: chi.NewRouter(),
-		store:  newsfeed.New(),
+		store:  store,
+		logger: logger,
 	}
 
 	s.configureRouter()
 
+	s.logger.Info("Server initialized")
 	return s
 }
 
 func main() {
-	srv := NewServer()
+	logger := logrus.New()
+	logger.Formatter = &logrus.TextFormatter{
+		FullTimestamp: true,
+	}
+
+	store := newsfeed.New()
+	srv := NewServer(logger, store)
+	logger.Info("Server started")
 	http.ListenAndServe(":3000", srv.router)
 }

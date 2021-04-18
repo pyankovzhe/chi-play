@@ -2,3 +2,11 @@
 ## explicit
 github.com/go-chi/chi
 github.com/go-chi/chi/middleware
+# github.com/sirupsen/logrus v1.8.1
+## explicit
+github.com/sirupsen/logrus
+# golang.org/x/sys v0.0.0-20210119212857-b64e53b001e4
+## explicit
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/unix
+golang.org/x/sys/windows
