@@ -12,7 +12,7 @@ func NewsfeedPost(feed newsfeed.Adder) http.HandlerFunc {
 		request := map[string]string{}
 		json.NewDecoder(r.Body).Decode(&request)
 
-		feed.Add(newsfeed.Item{
+		feed.Add(&newsfeed.Item{
 			Title: request["title"],
 			Post:  request["post"],
 		})

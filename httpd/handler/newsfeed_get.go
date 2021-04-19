@@ -18,11 +18,17 @@ func NewsfeedGet(feed newsfeed.Getter) http.HandlerFunc {
 
 func NewsfeedShow(feed newsfeed.Getter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var item newsfeed.Item
+		var item *newsfeed.Item
+		var err error
 
 		if itemTitle := chi.URLParam(r, "itemTitle"); itemTitle != "" {
-			item = feed.FindItem(itemTitle)
+			item, err = feed.FindItem(itemTitle)
 		} else {
+			http.Error(w, http.StatusText(404), 404)
+			return
+		}
+
+		if err != nil {
 			http.Error(w, http.StatusText(404), 404)
 			return
 		}

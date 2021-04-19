@@ -1,12 +1,14 @@
 package newsfeed
 
+import "errors"
+
 type Getter interface {
-	GetAll() []Item
-	FindItem(string) Item
+	GetAll() []*Item
+	FindItem(string) (*Item, error)
 }
 
 type Adder interface {
-	Add(item Item)
+	Add(item *Item)
 }
 
 type Item struct {
@@ -15,32 +17,34 @@ type Item struct {
 }
 
 type Repo struct {
-	Items []Item
+	Items map[string]*Item
 }
 
 func New() *Repo {
 	return &Repo{
-		Items: []Item{},
+		Items: map[string]*Item{},
 	}
 }
 
-func (r *Repo) Add(item Item) {
-	r.Items = append(r.Items, item)
+func (r *Repo) Add(item *Item) {
+	r.Items[item.Title] = item
 }
 
-func (r *Repo) GetAll() []Item {
-	return r.Items
-}
-
-func (r *Repo) FindItem(title string) Item {
-	var foundItem Item
-
+func (r *Repo) GetAll() []*Item {
+	items := make([]*Item, 0, len(r.Items))
 	for _, item := range r.Items {
-		if item.Title == title {
-			foundItem = item
-			break
-		}
+		items = append(items, item)
 	}
 
-	return foundItem
+	return items
+}
+
+func (r *Repo) FindItem(title string) (*Item, error) {
+	foundItem, ok := r.Items[title]
+
+	if !ok {
+		return nil, errors.New("Record not found")
+	}
+
+	return foundItem, nil
 }
