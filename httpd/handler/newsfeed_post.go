@@ -1,21 +1,28 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
+	"github.com/go-chi/render"
 	"github.com/pyankovzhe/chi-router/platform/newsfeed"
 )
 
+type itemRequest struct {
+	*newsfeed.Item
+}
+
 func NewsfeedPost(feed newsfeed.Adder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		request := map[string]string{}
-		json.NewDecoder(r.Body).Decode(&request)
+		// request := map[string]string{}
+		// json.NewDecoder(r.Body).Decode(&request)
+		data := &itemRequest{}
 
-		feed.Add(&newsfeed.Item{
-			Title: request["title"],
-			Post:  request["post"],
-		})
+		if err := render.Bind(r, data); err != nil {
+			http.Error(w, http.StatusText("Invalid request."), 400)
+			return
+		}
+
+		feed.Add(data.Item)
 		w.Write([]byte("OK"))
 	}
 }
