@@ -23,6 +23,7 @@ func (s *server) configureRouter() {
 
 	s.router.Get("/newsfeed", handler.NewsfeedGet(s.store))
 	s.router.Post("/newsfeed", handler.NewsfeedPost(s.store))
+	s.router.Get("/newsfeed/items/{itemTitle}", handler.NewsfeedShow(s.store))
 	s.router.Get("/panic-test", func(w http.ResponseWriter, r *http.Request) {
 		panic("panic")
 	})
