@@ -1,6 +1,8 @@
 package newsfeed
 
-import "errors"
+import (
+	"errors"
+)
 
 type Getter interface {
 	GetAll() []*Item
@@ -28,8 +30,8 @@ func New() *Repo {
 }
 
 func (r *Repo) Add(item *Item) {
-	newId := int32(len(r.Items) + 1)
-	r.Items[newId] = item
+	item.ID = int32(len(r.Items) + 1)
+	r.Items[item.ID] = item
 }
 
 func (r *Repo) GetAll() []*Item {

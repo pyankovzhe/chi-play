@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -18,7 +17,6 @@ func NewsfeedPost(feed newsfeed.Adder) http.HandlerFunc {
 			return
 		}
 
-		fmt.Printf("Parsed rquest body: %v, %v", data.ID, data.Title)
 		feed.Add(data.Item)
 		w.Write([]byte("OK"))
 	}
