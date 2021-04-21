@@ -4,7 +4,7 @@ import "errors"
 
 type Getter interface {
 	GetAll() []*Item
-	FindItem(string) (*Item, error)
+	FindItem(int32) (*Item, error)
 }
 
 type Adder interface {
@@ -12,22 +12,24 @@ type Adder interface {
 }
 
 type Item struct {
+	ID    int32  `json:"id"`
 	Title string `json:"title"`
 	Post  string `json:"post"`
 }
 
 type Repo struct {
-	Items map[string]*Item
+	Items map[int32]*Item
 }
 
 func New() *Repo {
 	return &Repo{
-		Items: map[string]*Item{},
+		Items: map[int32]*Item{},
 	}
 }
 
 func (r *Repo) Add(item *Item) {
-	r.Items[item.Title] = item
+	newId := int32(len(r.Items) + 1)
+	r.Items[newId] = item
 }
 
 func (r *Repo) GetAll() []*Item {
@@ -39,8 +41,8 @@ func (r *Repo) GetAll() []*Item {
 	return items
 }
 
-func (r *Repo) FindItem(title string) (*Item, error) {
-	foundItem, ok := r.Items[title]
+func (r *Repo) FindItem(id int32) (*Item, error) {
+	foundItem, ok := r.Items[id]
 
 	if !ok {
 		return nil, errors.New("Record not found")
