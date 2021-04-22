@@ -21,9 +21,9 @@ func (s *server) configureRouter() {
 	s.router.Use(middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: s.logger, NoColor: false}))
 	s.router.Use(middleware.Recoverer)
 
-	s.router.Get("/newsfeed", handler.NewsfeedGet(s.store))
+	s.router.Get("/newsfeed", handler.NewsfeedList(s.store))
 	s.router.Post("/newsfeed", handler.NewsfeedPost(s.store))
-	s.router.Get("/newsfeed/items/{id}", handler.NewsfeedShow(s.store))
+	s.router.Get("/newsfeed/{id}", handler.NewsfeedShow(s.store))
 	s.router.Get("/panic-test", func(w http.ResponseWriter, r *http.Request) {
 		panic("panic")
 	})

@@ -10,7 +10,7 @@ type Getter interface {
 }
 
 type Adder interface {
-	Add(item *Item)
+	Add(item *Item) *Item
 }
 
 type Item struct {
@@ -29,9 +29,11 @@ func New() *Repo {
 	}
 }
 
-func (r *Repo) Add(item *Item) {
+func (r *Repo) Add(item *Item) *Item {
 	item.ID = int32(len(r.Items) + 1)
 	r.Items[item.ID] = item
+
+	return item
 }
 
 func (r *Repo) GetAll() []*Item {
