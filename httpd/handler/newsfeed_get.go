@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/render"
 
 	"github.com/pyankovzhe/chi-router/platform/newsfeed"
 )
@@ -24,19 +25,19 @@ func NewsfeedShow(feed newsfeed.Getter) http.HandlerFunc {
 
 		itemIdStr := chi.URLParam(r, "id")
 		if itemIdStr == "" {
-			http.Error(w, http.StatusText(400), 400)
+			render.Render(w, r, &ErrResponse{Code: http.StatusBadRequest, Message: "id is required"})
 			return
 		}
 
 		itemId, err := parseInt32FromParam(itemIdStr)
 		if err != nil {
-			http.Error(w, http.StatusText(400), 400)
+			render.Render(w, r, &ErrResponse{Code: http.StatusBadRequest, Message: err.Error()})
 			return
 		}
 
 		item, err = feed.FindItem(itemId)
 		if err != nil {
-			http.Error(w, http.StatusText(404), 404)
+			render.Render(w, r, &ErrResponse{Code: http.StatusNotFound, Message: err.Error()})
 			return
 		}
 

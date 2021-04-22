@@ -13,7 +13,7 @@ func NewsfeedPost(feed newsfeed.Adder) http.HandlerFunc {
 		data := &itemRequest{}
 
 		if err := render.Bind(r, data); err != nil {
-			http.Error(w, http.StatusText(400), 400)
+			render.Render(w, r, &ErrResponse{Code: http.StatusBadRequest, Message: err.Error()})
 			return
 		}
 
@@ -27,9 +27,10 @@ type itemRequest struct {
 }
 
 func (i *itemRequest) Bind(r *http.Request) error {
-	// a.Article is nil if no Article fields are sent in the request. Return an
+	// a.Item is nil if no Item fields are sent in the request. Return an
 	// error to avoid a nil pointer dereference.
 	if i.Item == nil {
+
 		return errors.New("missing required Item fields.")
 	}
 
